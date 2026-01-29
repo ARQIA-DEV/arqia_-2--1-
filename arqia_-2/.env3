@@ -1,0 +1,6 @@
+OPENAI_API_KEY=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
+SECRET_KEY=g#980&szb7(lzl-%v*6!dc+v9bj4$&3tmosn0voukk*aw1bv@9
+DEBUG=FALSE
+ALLOWED_HOSTS=.onrender.com,127.0.0.1,localhost
+DJANGO_SETTINGS_MODULE=arqia.settings.prod
+DATABASE_URL=postgresql://admin:yl2XGYxn0DdthkJwSK7l68o2QRrv14Ky@dpg-d0ekp8umcj7s73fua81g-a/arqia_db
