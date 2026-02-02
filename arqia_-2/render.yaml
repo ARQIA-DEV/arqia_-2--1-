@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: ./build.sh
-    startCommand: gunicorn arqia.wsgi:application --bind 0.0.0.0:8000
+    startCommand: python manage.py migrate --noinput --settings=arqia.settings.prod && gunicorn arqia.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 400 --access-logfile - --error-logfile - --log-level info
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: arqia.settings.prod

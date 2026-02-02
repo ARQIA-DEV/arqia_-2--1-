@@ -48,6 +48,10 @@ class AnaliseDocumentoView(APIView):
 
     def post(self, request, *args, **kwargs):
         if 'arquivo' not in request.FILES or 'categoria' not in request.data:
+            logger.warning(
+                "analise_request_invalid user_id=%s reason=missing_fields",
+                request.user.id if request.user.is_authenticated else None,
+            )
             return Response({"erro": "Arquivo e categoria são obrigatórios"}, status=400)
 
         arquivo = request.FILES['arquivo']
@@ -57,9 +61,19 @@ class AnaliseDocumentoView(APIView):
         tipos_suportados = ['pdf', 'docx', 'xlsx', 'dwg', 'ifc']
 
         if arquivo.size > 5 * 1024 * 1024:
+            logger.warning(
+                "analise_request_invalid user_id=%s reason=file_too_large size=%s",
+                request.user.id if request.user.is_authenticated else None,
+                arquivo.size,
+            )
             return Response({"erro": "Arquivo muito grande. Tamanho máximo: 5MB"}, status=400)
 
         if extensao not in tipos_suportados:
+            logger.warning(
+                "analise_request_invalid user_id=%s reason=unsupported_extension extensao=%s",
+                request.user.id if request.user.is_authenticated else None,
+                extensao,
+            )
             return Response({"erro": f"Tipo de arquivo não suportado: .{extensao}"}, status=400)
 
         nome_unico = f"{uuid.uuid4().hex}_{nome_original}"
@@ -95,7 +109,17 @@ class AnaliseDocumentoView(APIView):
                 prompt,
                 request.user.id
             )
-            
+            logger.info(
+                (
+                    "analise_task_queued documento_id=%s user_id=%s categoria=%s "
+                    "extensao=%s arquivo_size=%s"
+                ),
+                documento.id,
+                request.user.id,
+                categoria_nome,
+                extensao,
+                arquivo.size,
+            )
 
             LogDeSistema.objects.create(
                 acao="Análise agendada",
